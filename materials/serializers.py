@@ -1,19 +1,26 @@
-from rest_framework import serializers  # type: ignore
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from materials.models import Course, Lesson
 
 
-class CourseSerializer(serializers.ModelSerializer):
+class CourseSerializer(ModelSerializer):
     """
     сериализатор модели курса
     """
+    lessons = SerializerMethodField()
+
+    def get_lessons(self, course):
+        return Lesson.objects.all().filter(course=course).count()
 
     class Meta:
         model = Course
         fields = "__all__"
 
 
-class LessonSerializer(serializers.ModelSerializer):
+
+
+
+class LessonSerializer(ModelSerializer):
     """
     сериализатор модели урока
     """

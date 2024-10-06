@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "hw-24-1"
+name = "hw-24-2"
 version = "0.1.0"
 description = ""
 authors = ["UltimaKIND <minion9@mail.ru>"]
 readme = "README.md"
-packages = [{include = "hw_24"}]
+packages = []
 
 [tool.poetry.dependencies]
 python = "^3.10"
