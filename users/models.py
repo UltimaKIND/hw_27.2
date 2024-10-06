@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from materials.models import Course, Lesson
 
 NULLABLE = {"blank": True, "null": True}
 
@@ -27,3 +28,15 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+class Payment(models.Model):
+    payment_choices = (
+        ("наличные", "наличные"),
+        ("перевод на счет", "перевод на счет")
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь')
+    payment_date = models.DateField(verbose_name='дата оплаты', auto_now_add=True)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, verbose_name='оплаченный курс', **NULLABLE)
+    lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, verbose_name='отдельно оплаченный урок', **NULLABLE)
+    payment_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment = models.CharField(max_length=100, choices=payment_choices)

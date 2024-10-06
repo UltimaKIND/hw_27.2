@@ -6,12 +6,10 @@ from rest_framework.viewsets import ModelViewSet  # type: ignore
 from materials.models import Course, Lesson
 from materials.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer
 
-
 class CourseViewSet(ModelViewSet):
     """
     контроллер CRUD курса
     """
-
     queryset = Course.objects.all()
 
     def get_serializer_class(self):
