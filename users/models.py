@@ -40,3 +40,8 @@ class Payment(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, verbose_name='отдельно оплаченный урок', **NULLABLE)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment = models.CharField(max_length=100, choices=payment_choices)
+
+    class Meta:
+        verbose_name = 'Платеж'
+        verbose_name_plural = 'Платежи'
+        ordering = ('payment_date',)
