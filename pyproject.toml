@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "hw-24-2"
+name = "hw-25-1"
 version = "0.1.0"
 description = ""
 authors = ["UltimaKIND <minion9@mail.ru>"]
@@ -7,7 +7,7 @@ readme = "README.md"
 packages = []
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.12"
 django = "^5.1.1"
 djangorestframework = "^3.15.2"
 python-dotenv = "^1.0.1"
