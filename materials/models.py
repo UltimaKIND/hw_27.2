@@ -1,4 +1,5 @@
 from django.db import models
+
 from config.settings import AUTH_USER_MODEL
 
 # константа для полей с возможными нулевыми значениями
@@ -17,7 +18,13 @@ class Course(models.Model):
     description = models.TextField(
         help_text="укажите описание", verbose_name="описание курса", **NULLABLE
     )
-    owner = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='создатель курса', related_name='courses', **NULLABLE)
+    owner = models.ForeignKey(
+        AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="создатель курса",
+        related_name="courses",
+        **NULLABLE
+    )
 
     class Meta:
         verbose_name = "курс"
@@ -41,8 +48,15 @@ class Lesson(models.Model):
     )
     link_to_video = models.TextField(verbose_name="ссылка на видео", **NULLABLE)
     course = models.ForeignKey(
-        Course, on_delete=models.SET_NULL, verbose_name="курс", **NULLABLE)
-    owner = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='создатель урока', related_name='lessons', **NULLABLE)
+        Course, on_delete=models.SET_NULL, verbose_name="курс", **NULLABLE
+    )
+    owner = models.ForeignKey(
+        AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="создатель урока",
+        related_name="lessons",
+        **NULLABLE
+    )
 
     class Meta:
         verbose_name = "урок"
@@ -50,4 +64,3 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.title
-
