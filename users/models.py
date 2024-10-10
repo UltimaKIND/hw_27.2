@@ -54,6 +54,11 @@ class Payment(models.Model):
         verbose_name_plural = "Платежи"
         ordering = ("payment_date",)
 
+
 class Subscription(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='подписка пользователя')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='курс подписки')
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="подписка пользователя"
+    )
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, verbose_name="курс подписки"
+    )
