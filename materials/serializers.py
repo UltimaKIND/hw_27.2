@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-
+from materials.validators import YouTubeLinkValidator
 from materials.models import Course, Lesson
 
 
@@ -11,6 +11,7 @@ class LessonSerializer(ModelSerializer):
     class Meta:
         model = Lesson
         fields = "__all__"
+        validators = [YouTubeLinkValidator()]
 
 
 class CourseSerializer(ModelSerializer):
