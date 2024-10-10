@@ -75,8 +75,9 @@ class SubscriptionAPIView(APIView):
             subs_item.delete()
             message = "подписка удалена"
             # Если подписки у пользователя на этот курс нет - создаем ее
+            return Response({"message": message}, status=204)
         else:
             Subscription.objects.create(user=user, course=course_item)
             message = "подписка добавлена"
             # Возвращаем ответ в API
-        return Response({"message": message})
+            return Response({"message": message}, status=201)
