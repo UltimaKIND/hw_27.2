@@ -1,11 +1,14 @@
 from rest_framework import filters, status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet  # type: ignore
 
-from users.models import Payment, User
-from users.permissions import IsSelfUser
+from materials.models import Course
+from materials.serializers import SubscriptionSerializer
+from users.models import Payment, User, Subscription
+from users.permissions import IsSelfUser, IsOwner, IsModer
 from users.serializers import (OtherUserSerializer, PaymentSerializer,
                                UserSerializer)
 
@@ -50,3 +53,30 @@ class UserViewSet(ModelViewSet):
         else:
             self.serializer_class = OtherUserSerializer
         return self.serializer_class
+
+class SubscriptionAPIView(APIView):
+    """
+    контроллер создания/удаления подписки
+    """
+    permission_classes = [IsAuthenticated]
+
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        course_id = request.data.get('course')
+        if not course_id:
+            return Response({"message": "курс не передан"}, status=400)
+        course_item = get_object_or_404(Course, id=course_id)
+        subs_item = Subscription.objects.filter(user=user, course=course_item)
+
+            # Если подписка у пользователя на этот курс есть - удаляем ее
+        if subs_item.exists():
+            subs_item.delete()
+            message = 'подписка удалена'
+            # Если подписки у пользователя на этот курс нет - создаем ее
+        else:
+            Subscription.objects.create(user=user, course=course_item)
+            message = 'подписка добавлена'
+            # Возвращаем ответ в API
+        return Response({"message": message})
+
