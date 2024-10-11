@@ -6,7 +6,7 @@ from materials.models import Course
 from users.models import Subscription, User
 
 
-class CourseTestCase(APITestCase):
+class SubscriptionTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create(email="admin@sky.pro")
