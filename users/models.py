@@ -46,18 +46,18 @@ class Payment(models.Model):
         **NULLABLE
     )
     payment_amount = models.PositiveIntegerField(
-        verbose_name='оплата', help_text='введите сумму оплаты', **NULLABLE
+        verbose_name="оплата", help_text="введите сумму оплаты", **NULLABLE
     )
     session_id = models.CharField(
         max_length=255,
-        verbose_name='Id сессии',
-        help_text = 'Укажите Id сессии',
+        verbose_name="Id сессии",
+        help_text="Укажите Id сессии",
         **NULLABLE
     )
     link = models.URLField(
         max_length=400,
-        verbose_name='ссылка на оплату',
-        help_text='Укажите ссылку на оплату',
+        verbose_name="ссылка на оплату",
+        help_text="Укажите ссылку на оплату",
         **NULLABLE
     )
 

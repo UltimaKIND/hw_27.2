@@ -12,21 +12,35 @@ from materials.serializers import (CourseDetailSerializer, CourseSerializer,
                                    LessonSerializer)
 from users.permissions import IsModer, IsOwner
 
-@method_decorator(name='list', decorator=swagger_auto_schema(
-    operation_description="эндпоинт вывода списка курсов"
-))
-@method_decorator(name='retrieve', decorator=swagger_auto_schema(
-    operation_description="эндпоинт вывода детальной информации о курсе"
-))
-@method_decorator(name='update', decorator=swagger_auto_schema(
-    operation_description="эндпоинт обновление информации о курсе"
-))
-@method_decorator(name='create', decorator=swagger_auto_schema(
-    operation_description="эндпоинт создания нового курсa"
-))
-@method_decorator(name='destroy', decorator=swagger_auto_schema(
-    operation_description="эндпоинт удаления курса"
-))
+
+@method_decorator(
+    name="list",
+    decorator=swagger_auto_schema(
+        operation_description="эндпоинт вывода списка курсов"
+    ),
+)
+@method_decorator(
+    name="retrieve",
+    decorator=swagger_auto_schema(
+        operation_description="эндпоинт вывода детальной информации о курсе"
+    ),
+)
+@method_decorator(
+    name="update",
+    decorator=swagger_auto_schema(
+        operation_description="эндпоинт обновление информации о курсе"
+    ),
+)
+@method_decorator(
+    name="create",
+    decorator=swagger_auto_schema(
+        operation_description="эндпоинт создания нового курсa"
+    ),
+)
+@method_decorator(
+    name="destroy",
+    decorator=swagger_auto_schema(operation_description="эндпоинт удаления курса"),
+)
 class CourseViewSet(ModelViewSet):
     """
     контроллер CRUD курса

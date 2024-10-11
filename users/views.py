@@ -11,7 +11,8 @@ from users.models import Payment, Subscription, User
 from users.permissions import IsModer, IsOwner, IsSelfUser
 from users.serializers import (OtherUserSerializer, PaymentSerializer,
                                UserSerializer)
-from users.services import convert_rub_to_usd, create_stripe_price, create_stripe_session
+from users.services import (convert_rub_to_usd, create_stripe_price,
+                            create_stripe_session)
 
 
 class PaymentViewSet(ModelViewSet):
@@ -31,6 +32,7 @@ class PaymentViewSet(ModelViewSet):
         payment.session_id = session_id
         payment.link = payment_link
         payment.save()
+
 
 class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
