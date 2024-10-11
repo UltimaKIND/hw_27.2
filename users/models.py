@@ -32,9 +32,8 @@ class User(AbstractUser):
 
 
 class Payment(models.Model):
-    payment_choices = (("наличные", "наличные"), ("перевод на счет", "перевод на счет"))
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name="пользователь"
+        User, on_delete=models.CASCADE, verbose_name="пользователь", **NULLABLE
     )
     payment_date = models.DateField(verbose_name="дата оплаты", auto_now_add=True)
     course = models.ForeignKey(
@@ -46,13 +45,29 @@ class Payment(models.Model):
         verbose_name="отдельно оплаченный урок",
         **NULLABLE
     )
-    payment_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment = models.CharField(max_length=100, choices=payment_choices)
+    payment_amount = models.PositiveIntegerField(
+        verbose_name='оплата', help_text='введите сумму оплаты', **NULLABLE
+    )
+    session_id = models.CharField(
+        max_length=255,
+        verbose_name='Id сессии',
+        help_text = 'Укажите Id сессии',
+        **NULLABLE
+    )
+    link = models.URLField(
+        max_length=400,
+        verbose_name='ссылка на оплату',
+        help_text='Укажите ссылку на оплату',
+        **NULLABLE
+    )
 
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
         ordering = ("payment_date",)
+
+    def __str__(self):
+        return self.payment_amount
 
 
 class Subscription(models.Model):
