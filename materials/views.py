@@ -1,9 +1,10 @@
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.generics import CreateAPIView, get_object_or_404  # type: ignore
+from rest_framework.generics import CreateAPIView  # type: ignore
 from rest_framework.generics import (DestroyAPIView, ListAPIView,
-                                     RetrieveAPIView, UpdateAPIView)
+                                     RetrieveAPIView, UpdateAPIView,
+                                     get_object_or_404)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet  # type: ignore
@@ -12,8 +13,8 @@ from materials.models import Course, Lesson
 from materials.pagination import CustomPagination
 from materials.serializers import (CourseDetailSerializer, CourseSerializer,
                                    LessonSerializer)
-from users.permissions import IsModer, IsOwner
 from materials.tasks import update_mailing
+from users.permissions import IsModer, IsOwner
 
 
 @method_decorator(
@@ -72,15 +73,16 @@ class CourseViewSet(ModelViewSet):
         return super().get_permissions()
 
     def update(self, request, *args, **kwargs):
-            partial = kwargs.pop('partial', False)
-            course = self.get_object()
-            serializer = self.get_serializer(course, data=request.data, partial=partial)
-            serializer.is_valid(raise_exception=True)
-            course = serializer.save()
-            course.update_at = timezone.now()
-            course.save()
-            update_mailing.delay(course.id)
-            return Response(serializer.data)
+        partial = kwargs.pop("partial", False)
+        course = self.get_object()
+        serializer = self.get_serializer(course, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        course = serializer.save()
+        course.update_at = timezone.now()
+        course.save()
+        update_mailing.delay(course.id)
+        return Response(serializer.data)
+
 
 class LessonCreateApiView(CreateAPIView):
     """
@@ -95,14 +97,10 @@ class LessonCreateApiView(CreateAPIView):
         serializer.validated_data["owner"] = self.request.user
         lesson = serializer.save()
         if lesson.course:
-            delta =  timezone.now() - lesson.course.update_at
-            if delta.seconds//3600 >= 4:
+            delta = timezone.now() - lesson.course.update_at
+            if delta.seconds // 3600 >= 4:
                 lesson.course.update_at = timezone.now()
                 update_mailing.delay(lesson.course.id)
-
-
-
-
 
 
 class LessonUpdateApiView(UpdateAPIView):
@@ -117,8 +115,8 @@ class LessonUpdateApiView(UpdateAPIView):
     def perform_update(self, serializer):
         lesson = serializer.save()
         if lesson.course:
-            delta =  timezone.now() - lesson.course.update_at
-            if delta.seconds//3600 >= 4:
+            delta = timezone.now() - lesson.course.update_at
+            if delta.seconds // 3600 >= 4:
                 lesson.course.update_at = timezone.now()
                 update_mailing.delay(lesson.course.id)
 
@@ -151,4 +149,3 @@ class LessonDestroyApiView(DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [~IsModer, IsOwner]
-

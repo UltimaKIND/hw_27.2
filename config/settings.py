@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "django_filters",
-    'django_celery_beat',
+    "django_celery_beat",
     "drf_yasg",
     "users",
     "materials",
@@ -168,10 +168,17 @@ CACHES_ENABLED = os.getenv("CACHES_ENABLED", False) == "True"
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
-CElERY_BROKER_URL = os.getenv('CElERY_BROKER_URL')
-CELERY_BROKER_TRANSPORT = os.getenv('CELERY_BROKER_TRANSPORT')
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+CElERY_BROKER_URL = os.getenv("CElERY_BROKER_URL")
+CELERY_BROKER_TRANSPORT = os.getenv("CELERY_BROKER_TRANSPORT")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
+
+CELERY_BEAT_SCHEDULE = {
+    "lost_for_us": {
+        "task": "materials.tasks.lost_for_us",
+        "schedule": timedelta(days=1),
+    }
+}
