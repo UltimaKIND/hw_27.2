@@ -76,7 +76,9 @@ class CourseViewSet(ModelViewSet):
             course = self.get_object()
             serializer = self.get_serializer(course, data=request.data, partial=partial)
             serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
+            course = serializer.save()
+            course.update_at = timezone.now()
+            course.save()
             update_mailing.delay(course.id)
             return Response(serializer.data)
 
@@ -149,3 +151,4 @@ class LessonDestroyApiView(DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [~IsModer, IsOwner]
+
