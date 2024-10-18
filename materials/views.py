@@ -1,9 +1,10 @@
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.generics import CreateAPIView  # type: ignore
+from rest_framework.generics import CreateAPIView, get_object_or_404  # type: ignore
 from rest_framework.generics import (DestroyAPIView, ListAPIView,
                                      RetrieveAPIView, UpdateAPIView)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet  # type: ignore
 
 from materials.models import Course, Lesson
@@ -11,6 +12,7 @@ from materials.pagination import CustomPagination
 from materials.serializers import (CourseDetailSerializer, CourseSerializer,
                                    LessonSerializer)
 from users.permissions import IsModer, IsOwner
+from materials.tasks import update_mailing
 
 
 @method_decorator(
@@ -66,9 +68,16 @@ class CourseViewSet(ModelViewSet):
             self.permission_classes = (IsModer | IsOwner,)
         elif self.action == "destroy":
             self.permission_classes = (~IsModer, IsOwner)
-
         return super().get_permissions()
 
+    def update(self, request, *args, **kwargs):
+            partial = kwargs.pop('partial', False)
+            course = self.get_object()
+            serializer = self.get_serializer(course, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            update_mailing.delay(course.id)
+            return Response(serializer.data)
 
 class LessonCreateApiView(CreateAPIView):
     """
