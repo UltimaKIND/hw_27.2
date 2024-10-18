@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.generics import CreateAPIView, get_object_or_404  # type: ignore
@@ -90,7 +91,16 @@ class LessonCreateApiView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.validated_data["owner"] = self.request.user
-        serializer.save()
+        lesson = serializer.save()
+        if lesson.course:
+            delta =  timezone.now() - lesson.course.update_at
+            if delta.seconds//3600 >= 4:
+                lesson.course.update_at = timezone.now()
+                update_mailing.delay(lesson.course.id)
+
+
+
+
 
 
 class LessonUpdateApiView(UpdateAPIView):
@@ -101,6 +111,14 @@ class LessonUpdateApiView(UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsModer | IsOwner]
+
+    def perform_update(self, serializer):
+        lesson = serializer.save()
+        if lesson.course:
+            delta =  timezone.now() - lesson.course.update_at
+            if delta.seconds//3600 >= 4:
+                lesson.course.update_at = timezone.now()
+                update_mailing.delay(lesson.course.id)
 
 
 class LessonRetrieveApiView(RetrieveAPIView):
