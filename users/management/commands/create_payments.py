@@ -1,9 +1,28 @@
-from users.models import User, Payment
-from materials.models import Course
 from django.core.management import BaseCommand
+
+from materials.models import Course
+from users.models import Payment, User
+
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        user = User.objects.all().filter(email='test_user@sky.pro').first()
-        course = Course.objects.all().filter(title='python').first()
-        Payment.objects.create(user=user, course=course, payment_amount=10000.00, payment='наличные')
+        user_email = input("user_email: ")
+        user = User.objects.all().filter(email=user_email).first()
+        selected_lesson = input("title: ")
+        selected_course = input("title: ")
+        payment_amount = input("payment_amount: ")
+        payment = input("наличные или перевод на счет")
+        if selected_lesson:
+            Payment.objects.create(
+                user=user,
+                lesson=selected_lesson,
+                payment_amount=payment_amount,
+                payment=payment,
+            )
+        elif selected_course:
+            Payment.objects.create(
+                user=user,
+                course=selected_course,
+                payment_amount=payment_amount,
+                payment=payment,
+            )
